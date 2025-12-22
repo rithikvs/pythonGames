@@ -61,33 +61,34 @@ function GameEmbed({ gameKey, onExit }) {
     const w = window.innerWidth;
     const h = window.innerHeight;
     if (w < 600) {
-      if (gameKey === "flappy_bird") {
-        // Make Flappy Bird canvas tall on mobile
+      // Make all games a bit taller on mobile, and runner game even taller
+      if (gameKey === "endless_runner") {
         const width = Math.max(w * 0.99, 280);
-        const height = Math.max(Math.min(h * 0.85, w * 1.3), 340);
+        // Use up to 95% of viewport height, but not more than 1.5x width
+        const height = Math.max(Math.min(h * 0.95, width * 1.5), 340);
         return { width, height };
       }
       const width = Math.max(w * 0.99, 280);
-      const height = Math.max(Math.min(h * 0.6, w * 0.99), 280);
+      const height = Math.max(Math.min(h * 0.8, w * 1.15), 320);
       return { width, height };
     }
     return { width: 520, height: 520 };
   });
 
+  const [showMobileRestart, setShowMobileRestart] = useState(true);
   useEffect(() => {
     function handleResize() {
       const w = window.innerWidth;
       const h = window.innerHeight;
       if (w < 600) {
-        if (gameKey === "flappy_bird") {
-          setCanvasSize({
-            width: Math.max(w * 0.99, 280),
-            height: Math.max(Math.min(h * 0.85, w * 1.3), 340)
-          });
+        if (gameKey === "endless_runner") {
+          const width = Math.max(w * 0.99, 280);
+          const height = Math.max(Math.min(h * 0.95, width * 1.5), 340);
+          setCanvasSize({ width, height });
         } else {
           setCanvasSize({
             width: Math.max(w * 0.99, 280),
-            height: Math.max(Math.min(h * 0.6, w * 0.99), 280)
+            height: Math.max(Math.min(h * 0.8, w * 1.15), 320)
           });
         }
       } else {
@@ -96,6 +97,16 @@ function GameEmbed({ gameKey, onExit }) {
     }
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
+  }, [gameKey]);
+
+  // Listen for game over to hide restart button on mobile
+  useEffect(() => {
+    if (window.innerWidth >= 600) return;
+    // Listen for a custom event from game logic
+    function onGameOver() { setShowMobileRestart(false); }
+    window.addEventListener("game-over", onGameOver);
+    setShowMobileRestart(true); // Show on mount/game change
+    return () => window.removeEventListener("game-over", onGameOver);
   }, [gameKey]);
 
   return (
@@ -121,7 +132,7 @@ function GameEmbed({ gameKey, onExit }) {
       </div>
       <div className="game-embed-btn-row">
         <button className="pause-btn" onClick={handlePause}>{paused ? "Resume" : "Pause"}</button>
-        {gameKey === "flappy_bird" && window.innerWidth < 600 && (
+        {window.innerWidth < 600 && showMobileRestart && (
           <button className="pause-btn" style={{ background: "#22c55e" }} onClick={handleRestart}>Restart</button>
         )}
         <button className="menu-btn" onClick={handleMenu}>Main Menu</button>

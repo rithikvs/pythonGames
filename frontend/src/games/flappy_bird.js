@@ -170,6 +170,10 @@ export default function runFlappyBird(canvas, controlRef) {
     running = false;
     showOverlay = true;
     overlayMessage = `Game Over! Your score: ${score}`;
+    // Dispatch game-over event for mobile
+    if (window.innerWidth < 600) {
+      window.dispatchEvent(new Event("game-over"));
+    }
   }
 
   // ---------- LOOP ----------
