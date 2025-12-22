@@ -102,11 +102,15 @@ export default function runMemoryMatch(canvas, controlRef) {
     ctx.stroke();
     ctx.shadowBlur = 0;
     if (t > 0.5 || card.flipped || card.matched) {
-      ctx.font = `${Math.floor(CARD_H * (isMobile ? 0.68 : 0.55))}px "Segoe UI Emoji", "Apple Color Emoji", serif`;
+      // Make emoji fit card better on mobile
+      const fontSize = isMobile
+        ? Math.floor(Math.min(CARD_W, CARD_H) * 0.78)
+        : Math.floor(CARD_H * 0.55);
+      ctx.font = `${fontSize}px "Segoe UI Emoji", "Apple Color Emoji", serif`;
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.fillStyle = "#222";
-      ctx.fillText(card.emoji, 0, 4);
+      ctx.fillText(card.emoji, 0, 2);
     }
     ctx.restore();
   }
@@ -227,8 +231,11 @@ export default function runMemoryMatch(canvas, controlRef) {
         mx > canvas.width/2-60 && mx < canvas.width/2+60 &&
         my > canvas.height/2+10 && my < canvas.height/2+54
       ) {
-        reset();
-        animate(performance.now());
+        if (showOverlay) { // prevent double triggers
+          showOverlay = false;
+          reset();
+          animate(performance.now());
+        }
       }
       return;
     }
@@ -251,7 +258,13 @@ export default function runMemoryMatch(canvas, controlRef) {
     if (idx !== -1) onCardClick(idx);
   }
   canvas.addEventListener("mousedown", handlePointer);
-  canvas.addEventListener("touchstart", handlePointer);
+  // Touch: use pointer events for smoother mobile tap
+  canvas.addEventListener("touchstart", function(e) {
+    if (e.touches.length === 1) {
+      handlePointer(e);
+      e.preventDefault();
+    }
+  }, { passive: false });
 
   // --- CONTROLS ---
   if (controlRef && typeof controlRef === "object") {
