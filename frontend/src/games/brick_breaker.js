@@ -322,15 +322,31 @@ export default function runBrickBreaker(canvas, controlRef) {
     touchDragging = false;
   });
   // Overlay click for restart
+  function handleRestart() {
+    running = true;
+    paused = false;
+    reset();
+    loop();
+    if (window.innerWidth < 600) {
+      setTimeout(() => window.dispatchEvent(new Event("restart-done")), 0);
+    }
+  }
   canvas.addEventListener("click", function(e) {
     if (!showOverlay) return;
     const rect = canvas.getBoundingClientRect();
-    const mx = e.clientX - rect.left;
-    const my = e.clientY - rect.top;
+    const mx = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+    const my = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
     if (mx > canvas.width/2-60 && mx < canvas.width/2+60 && my > canvas.height/2+10 && my < canvas.height/2+54) {
-      reset();
-      running = true;
-      loop();
+      handleRestart();
+    }
+  });
+  canvas.addEventListener("touchstart", function(e) {
+    if (!showOverlay) return;
+    const rect = canvas.getBoundingClientRect();
+    const mx = e.touches[0].clientX - rect.left;
+    const my = e.touches[0].clientY - rect.top;
+    if (mx > canvas.width/2-60 && mx < canvas.width/2+60 && my > canvas.height/2+10 && my < canvas.height/2+54) {
+      handleRestart();
     }
   });
 
@@ -339,12 +355,7 @@ export default function runBrickBreaker(canvas, controlRef) {
   // ---------- REACT CONTROLS ----------
   if (controlRef && typeof controlRef === "object") {
     controlRef.current = {
-      restart: () => {
-        running = true;
-        paused = false;
-        reset();
-        loop();
-      },
+      restart: handleRestart,
       pause: () => (paused = true),
       resume: () => (paused = false),
       isPaused: () => paused
