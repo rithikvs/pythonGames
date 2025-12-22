@@ -75,7 +75,7 @@ function GameEmbed({ gameKey, onExit }) {
     return { width: 520, height: 520 };
   });
 
-  const [showMobileRestart, setShowMobileRestart] = useState(true);
+  const [showRestart, setShowRestart] = useState(false);
   useEffect(() => {
     function handleResize() {
       const w = window.innerWidth;
@@ -100,15 +100,13 @@ function GameEmbed({ gameKey, onExit }) {
     return () => window.removeEventListener("resize", handleResize);
   }, [gameKey]);
 
-  // Listen for game over to hide restart button on mobile
+  // Listen for game over to show restart button
   useEffect(() => {
-    if (window.innerWidth >= 600) return;
-    // Listen for a custom event from game logic
-    function onGameOver() { setShowMobileRestart(true); }
-    function onRestartDone() { setShowMobileRestart(false); }
+    function onGameOver() { setShowRestart(true); }
+    function onRestartDone() { setShowRestart(false); }
     window.addEventListener("game-over", onGameOver);
     window.addEventListener("restart-done", onRestartDone);
-    setShowMobileRestart(true); // Show on mount/game change
+    setShowRestart(false); // Hide on mount/game change
     return () => {
       window.removeEventListener("game-over", onGameOver);
       window.removeEventListener("restart-done", onRestartDone);
@@ -141,6 +139,9 @@ function GameEmbed({ gameKey, onExit }) {
       </div>
       <div className="game-embed-btn-row">
         <button className="pause-btn" onClick={handlePause}>{paused ? "Resume" : "Pause"}</button>
+        {showRestart && (
+          <button className="pause-btn" style={{ background: "#ef4444", marginLeft: 8 }} onClick={handleRestart}>Restart</button>
+        )}
         <button className="menu-btn" onClick={handleMenu}>Main Menu</button>
       </div>
     </div>

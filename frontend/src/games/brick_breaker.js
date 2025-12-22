@@ -297,12 +297,8 @@ export default function runBrickBreaker(canvas, controlRef) {
       const rect = canvas.getBoundingClientRect();
       const mx = e.touches[0].clientX - rect.left;
       const my = e.touches[0].clientY - rect.top;
-      if (
-        my >= paddleY &&
-        my <= paddleY + paddleH + 20 &&
-        mx >= paddleX &&
-        mx <= paddleX + paddleW
-      ) {
+      // Allow swipe anywhere in bottom third of canvas
+      if (my > canvas.height * 2 / 3) {
         touchDragging = true;
         lastTouchX = mx;
         paddleVX = 0;
