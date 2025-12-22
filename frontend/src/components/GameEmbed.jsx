@@ -61,7 +61,12 @@ function GameEmbed({ gameKey, onExit }) {
     const w = window.innerWidth;
     const h = window.innerHeight;
     if (w < 600) {
-      // Use nearly full screen for mobile
+      if (gameKey === "flappy_bird") {
+        // Make Flappy Bird canvas tall on mobile
+        const width = Math.max(w * 0.99, 280);
+        const height = Math.max(Math.min(h * 0.85, w * 1.3), 340);
+        return { width, height };
+      }
       const width = Math.max(w * 0.99, 280);
       const height = Math.max(Math.min(h * 0.6, w * 0.99), 280);
       return { width, height };
@@ -74,17 +79,24 @@ function GameEmbed({ gameKey, onExit }) {
       const w = window.innerWidth;
       const h = window.innerHeight;
       if (w < 600) {
-        setCanvasSize({
-          width: Math.max(w * 0.99, 280),
-          height: Math.max(Math.min(h * 0.6, w * 0.99), 280)
-        });
+        if (gameKey === "flappy_bird") {
+          setCanvasSize({
+            width: Math.max(w * 0.99, 280),
+            height: Math.max(Math.min(h * 0.85, w * 1.3), 340)
+          });
+        } else {
+          setCanvasSize({
+            width: Math.max(w * 0.99, 280),
+            height: Math.max(Math.min(h * 0.6, w * 0.99), 280)
+          });
+        }
       } else {
         setCanvasSize({ width: 520, height: 520 });
       }
     }
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  }, [gameKey]);
 
   return (
     <div className="game-embed">
@@ -109,6 +121,9 @@ function GameEmbed({ gameKey, onExit }) {
       </div>
       <div className="game-embed-btn-row">
         <button className="pause-btn" onClick={handlePause}>{paused ? "Resume" : "Pause"}</button>
+        {gameKey === "flappy_bird" && window.innerWidth < 600 && (
+          <button className="pause-btn" style={{ background: "#22c55e" }} onClick={handleRestart}>Restart</button>
+        )}
         <button className="menu-btn" onClick={handleMenu}>Main Menu</button>
       </div>
     </div>
