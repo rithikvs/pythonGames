@@ -16,6 +16,8 @@ export default function runBrickBreaker(canvas, controlRef) {
   let paused = false;
   let showOverlay = false;
   let overlayMessage = "";
+  // Main menu callback (set by parent if needed)
+  let onMainMenu = null;
 
   const paddleW = 80, paddleH = 10, ballSize = 20;
   let paddleY = canvas.height - paddleH - 10; // Always 10px above bottom
@@ -102,12 +104,19 @@ export default function runBrickBreaker(canvas, controlRef) {
       ctx.font = "32px sans-serif";
       ctx.textAlign = "center";
       ctx.fillText(overlayMessage, canvas.width / 2, canvas.height / 2 - 20);
+      // Restart button
       ctx.font = "22px sans-serif";
       ctx.fillStyle = "#ef4444";
       ctx.fillRect(canvas.width/2-60, canvas.height/2+10, 120, 44);
       ctx.fillStyle = "#fff";
       ctx.font = "22px sans-serif";
       ctx.fillText("Restart", canvas.width/2, canvas.height/2+40);
+      // Main Menu button (placed lower)
+      ctx.fillStyle = "#38bdf8";
+      ctx.fillRect(canvas.width/2-60, canvas.height/2+64, 120, 44);
+      ctx.fillStyle = "#222";
+      ctx.font = "22px sans-serif";
+      ctx.fillText("Main Menu", canvas.width/2, canvas.height/2+94);
       ctx.textAlign = "left";
     }
   }
@@ -397,8 +406,22 @@ export default function runBrickBreaker(canvas, controlRef) {
     const rect = canvas.getBoundingClientRect();
     const mx = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
     const my = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+    // Restart button
     if (mx > canvas.width/2-60 && mx < canvas.width/2+60 && my > canvas.height/2+10 && my < canvas.height/2+54) {
       handleRestart();
+      return;
+    }
+    // Main Menu button (below restart)
+    if (mx > canvas.width/2-60 && mx < canvas.width/2+60 && my > canvas.height/2+64 && my < canvas.height/2+108) {
+      // Instantly go to main menu
+      if (typeof onMainMenu === 'function') {
+        onMainMenu();
+      } else {
+        // Fallback: dispatch event for parent to handle
+        window.dispatchEvent(new Event("bb-main-menu"));
+      }
+      showOverlay = false;
+      return;
     }
   });
   canvas.addEventListener("touchstart", function(e) {
@@ -406,8 +429,20 @@ export default function runBrickBreaker(canvas, controlRef) {
     const rect = canvas.getBoundingClientRect();
     const mx = e.touches[0].clientX - rect.left;
     const my = e.touches[0].clientY - rect.top;
+    // Restart button
     if (mx > canvas.width/2-60 && mx < canvas.width/2+60 && my > canvas.height/2+10 && my < canvas.height/2+54) {
       handleRestart();
+      return;
+    }
+    // Main Menu button
+    if (mx > canvas.width/2-60 && mx < canvas.width/2+60 && my > canvas.height/2+64 && my < canvas.height/2+108) {
+      if (typeof onMainMenu === 'function') {
+        onMainMenu();
+      } else {
+        window.dispatchEvent(new Event("bb-main-menu"));
+      }
+      showOverlay = false;
+      return;
     }
   });
 
@@ -419,7 +454,8 @@ export default function runBrickBreaker(canvas, controlRef) {
       restart: handleRestart,
       pause: () => (paused = true),
       resume: () => (paused = false),
-      isPaused: () => paused
+      isPaused: () => paused,
+      setMainMenuHandler: fn => { onMainMenu = fn; }
     };
   }
 
