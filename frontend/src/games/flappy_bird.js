@@ -51,16 +51,30 @@ export default function runFlappyBird(canvas, controlRef) {
   function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Pipes
-    ctx.fillStyle = "#4ade80";
+    // Pipes with caps
     for (let p of pipes) {
+      // Main pipe color
+      ctx.fillStyle = "#4ade80";
+      // Top pipe
       ctx.fillRect(p.x, 0, PIPE_WIDTH, p.top);
-      ctx.fillRect(
-        p.x,
-        p.top + PIPE_GAP,
-        PIPE_WIDTH,
-        canvas.height
-      );
+      // Bottom pipe
+      ctx.fillRect(p.x, p.top + PIPE_GAP, PIPE_WIDTH, canvas.height - (p.top + PIPE_GAP));
+
+      // Cap color
+      ctx.fillStyle = "#22c55e";
+      // Top cap
+      ctx.fillRect(p.x - 4, p.top - 12, PIPE_WIDTH + 8, 12);
+      // Bottom cap
+      ctx.fillRect(p.x - 4, p.top + PIPE_GAP, PIPE_WIDTH + 8, 12);
+      // Optional: rounded cap
+      ctx.beginPath();
+      ctx.arc(p.x + PIPE_WIDTH / 2, p.top - 6, PIPE_WIDTH / 2 + 2, Math.PI, 2 * Math.PI);
+      ctx.fillStyle = "#22c55e";
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(p.x + PIPE_WIDTH / 2, p.top + PIPE_GAP + 6, PIPE_WIDTH / 2 + 2, 0, Math.PI);
+      ctx.fillStyle = "#22c55e";
+      ctx.fill();
     }
 
     // Bird

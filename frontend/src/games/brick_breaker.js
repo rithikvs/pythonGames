@@ -16,7 +16,7 @@ export default function runBrickBreaker(canvas, controlRef) {
   let overlayMessage = "";
 
   const paddleW = 80, paddleH = 10, ballSize = 20;
-  const paddleY = 450;
+  let paddleY = canvas.height - paddleH - 10; // Always 10px above bottom
 
   const brickRowCount = 5, brickColCount = 7;
   const brickW = 60, brickH = 20;
@@ -33,15 +33,14 @@ export default function runBrickBreaker(canvas, controlRef) {
 
   // ---------- RESET ----------
   function reset() {
-    x = 240;
-    y = 400;
+    // Recalculate paddleY in case canvas size changed
+    paddleY = canvas.height - paddleH - 10;
+    x = canvas.width / 2 - ballSize / 2;
+    y = paddleY - ballSize - 30;
     dx = INITIAL_DX;
     dy = INITIAL_DY;
-    paddleX = 200;
+    paddleX = canvas.width / 2 - paddleW / 2;
     score = 0;
-    // Always reset speed to initial
-    dx = INITIAL_DX;
-    dy = INITIAL_DY;
     showOverlay = false;
     overlayMessage = "";
 

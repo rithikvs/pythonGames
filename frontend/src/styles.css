@@ -1,3 +1,52 @@
+/* Puzzle Game Styles */
+.puzzle-board {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 18px 12px;
+  margin: 2rem auto 1rem auto;
+  max-width: 520px;
+}
+.puzzle-card {
+  width: 60px;
+  height: 80px;
+  background: linear-gradient(135deg, #334155 60%, #64748b 100%);
+  border-radius: 1rem;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  color: #fff;
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.3s cubic-bezier(.68,-0.55,.27,1.55), box-shadow 0.2s;
+  perspective: 600px;
+}
+.puzzle-card.revealed, .puzzle-card.matched {
+  background: linear-gradient(135deg, #22c55e 60%, #4ade80 100%);
+  color: #fff;
+  transform: rotateY(180deg) scale(1.08);
+  box-shadow: 0 8px 24px rgba(34,197,94,0.18);
+}
+.puzzle-card .symbol {
+  transition: opacity 0.2s;
+  opacity: 1;
+}
+.puzzle-card:not(.revealed):not(.matched) .symbol {
+  opacity: 0;
+}
+.puzzle-card:hover {
+  box-shadow: 0 12px 32px rgba(59,130,246,0.18);
+  transform: scale(1.12) rotateY(10deg);
+}
+.puzzle-score {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: #38bdf8;
+  font-weight: 600;
+}
 /* --- Mobile Responsive Styles --- */
 @media (max-width: 600px) {
   .home {

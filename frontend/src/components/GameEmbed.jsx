@@ -5,7 +5,7 @@ const gameScripts = {
   snake: () => import("../games/snake.js"),
   flappy_bird: () => import("../games/flappy_bird.js"),
   brick_breaker: () => import("../games/brick_breaker.js"),
-  endless_runner: () => import("../games/endless_runner.js"),
+  memory_match: () => import("../games/memory_match.js"),
 };
 
 
@@ -61,17 +61,17 @@ function GameEmbed({ gameKey, onExit }) {
     const w = window.innerWidth;
     const h = window.innerHeight;
     if (w < 600) {
-      // Make all games a bit taller on mobile, and runner game even taller
-      if (gameKey === "endless_runner") {
-        const width = Math.max(w * 0.99, 280);
-        // Use up to 95% of viewport height, but not more than 1.5x width
-        const height = Math.max(Math.min(h * 0.95, width * 1.5), 340);
+      // Memory match: 4x5 grid, needs more height
+      if (gameKey === "memory_match") {
+        const width = Math.max(w * 0.99, 320);
+        const height = Math.max(Math.min(h * 0.95, width * 1.4), 420);
         return { width, height };
       }
       const width = Math.max(w * 0.99, 280);
       const height = Math.max(Math.min(h * 0.8, w * 1.15), 320);
       return { width, height };
     }
+    if (gameKey === "memory_match") return { width: 420, height: 600 };
     return { width: 520, height: 520 };
   });
 
@@ -81,9 +81,9 @@ function GameEmbed({ gameKey, onExit }) {
       const w = window.innerWidth;
       const h = window.innerHeight;
       if (w < 600) {
-        if (gameKey === "endless_runner") {
-          const width = Math.max(w * 0.99, 280);
-          const height = Math.max(Math.min(h * 0.95, width * 1.5), 340);
+        if (gameKey === "memory_match") {
+          const width = Math.max(w * 0.99, 320);
+          const height = Math.max(Math.min(h * 0.95, width * 1.4), 420);
           setCanvasSize({ width, height });
         } else {
           setCanvasSize({
@@ -92,7 +92,8 @@ function GameEmbed({ gameKey, onExit }) {
           });
         }
       } else {
-        setCanvasSize({ width: 520, height: 520 });
+        if (gameKey === "memory_match") setCanvasSize({ width: 420, height: 600 });
+        else setCanvasSize({ width: 520, height: 520 });
       }
     }
     window.addEventListener("resize", handleResize);
@@ -103,10 +104,15 @@ function GameEmbed({ gameKey, onExit }) {
   useEffect(() => {
     if (window.innerWidth >= 600) return;
     // Listen for a custom event from game logic
-    function onGameOver() { setShowMobileRestart(false); }
+    function onGameOver() { setShowMobileRestart(true); }
+    function onRestartDone() { setShowMobileRestart(false); }
     window.addEventListener("game-over", onGameOver);
+    window.addEventListener("restart-done", onRestartDone);
     setShowMobileRestart(true); // Show on mount/game change
-    return () => window.removeEventListener("game-over", onGameOver);
+    return () => {
+      window.removeEventListener("game-over", onGameOver);
+      window.removeEventListener("restart-done", onRestartDone);
+    };
   }, [gameKey]);
 
   return (
