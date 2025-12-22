@@ -56,10 +56,51 @@ function GameEmbed({ gameKey, onExit }) {
     onExit();
   };
 
+  // Responsive canvas sizing
+  const [canvasSize, setCanvasSize] = useState(() => {
+    const w = window.innerWidth;
+    if (w < 600) {
+      const width = Math.max(w * 0.98, 220);
+      const height = Math.max(w * 0.6, 220);
+      return { width, height };
+    }
+    return { width: 480, height: 480 };
+  });
+
+  useEffect(() => {
+    function handleResize() {
+      const w = window.innerWidth;
+      if (w < 600) {
+        setCanvasSize({ width: Math.max(w * 0.98, 220), height: Math.max(w * 0.6, 220) });
+      } else {
+        setCanvasSize({ width: 480, height: 480 });
+      }
+    }
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
     <div className="game-embed">
       <h2>Playing {gameKey.replace("_", " ")}</h2>
-      <canvas ref={canvasRef} width={480} height={480} style={{ background: "#222", borderRadius: 8, marginBottom: 16 }} />
+      <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
+        <canvas
+          ref={canvasRef}
+          width={canvasSize.width}
+          height={canvasSize.height}
+          style={{
+            background: "#222",
+            borderRadius: 8,
+            marginBottom: 16,
+            width: canvasSize.width,
+            height: canvasSize.height,
+            maxWidth: "98vw",
+            maxHeight: "60vw",
+            minWidth: 220,
+            minHeight: 220
+          }}
+        />
+      </div>
       <div className="game-embed-btn-row">
         <button className="pause-btn" onClick={handlePause}>{paused ? "Resume" : "Pause"}</button>
         <button className="menu-btn" onClick={handleMenu}>Main Menu</button>
