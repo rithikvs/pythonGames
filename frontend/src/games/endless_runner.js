@@ -188,6 +188,27 @@ export default function runEndlessRunner(canvas, controlRef) {
   }
   window.addEventListener("keydown", onKey);
   window.addEventListener("keyup", onKeyUp);
+  // Touch: tap right half to jump, left half to duck
+  let touchStartY = null;
+  canvas.addEventListener("touchstart", function(e) {
+    if (e.touches.length === 1) {
+      const rect = canvas.getBoundingClientRect();
+      const mx = e.touches[0].clientX - rect.left;
+      const my = e.touches[0].clientY - rect.top;
+      touchStartY = my;
+      if (mx > canvas.width / 2) {
+        // Jump
+        if (!jumping && y >= 420) { vy = -20; jumping = true; }
+      } else {
+        // Duck
+        playerDuck = true;
+      }
+    }
+  });
+  canvas.addEventListener("touchend", function(e) {
+    if (playerDuck) playerDuck = false;
+    touchStartY = null;
+  });
   // Add clickable jump/down buttons
   canvas.addEventListener("click", function(e) {
     const rect = canvas.getBoundingClientRect();
@@ -230,6 +251,8 @@ export default function runEndlessRunner(canvas, controlRef) {
     running = false;
     window.removeEventListener("keydown", onKey);
     window.removeEventListener("keyup", onKeyUp);
+    canvas.removeEventListener("touchstart", () => {});
+    canvas.removeEventListener("touchend", () => {});
     canvas.removeEventListener("click", () => {});
   };
 }

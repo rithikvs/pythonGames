@@ -198,6 +198,14 @@ export default function runFlappyBird(canvas, controlRef) {
   }
 
   window.addEventListener("keydown", onKey);
+  // Touch: tap to jump
+  canvas.addEventListener("touchstart", function(e) {
+    if (!paused && canJump) {
+      vy = jump;
+      canJump = false;
+      setTimeout(() => (canJump = true), 120);
+    }
+  });
   // Overlay click for restart
   canvas.addEventListener("click", function(e) {
     if (!showOverlay) return;
@@ -231,5 +239,6 @@ export default function runFlappyBird(canvas, controlRef) {
   return () => {
     running = false;
     window.removeEventListener("keydown", onKey);
+    canvas.removeEventListener("touchstart", () => {});
   };
 }

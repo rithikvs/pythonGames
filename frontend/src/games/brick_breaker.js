@@ -285,6 +285,38 @@ export default function runBrickBreaker(canvas, controlRef) {
   canvas.addEventListener("mousedown", onMouseDown);
   canvas.addEventListener("mousemove", onMouseMove);
   window.addEventListener("mouseup", onMouseUp);
+  // Touch drag for paddle
+  let touchDragging = false;
+  let touchOffsetX = 0;
+  canvas.addEventListener("touchstart", function(e) {
+    if (e.touches.length === 1) {
+      const rect = canvas.getBoundingClientRect();
+      const mx = e.touches[0].clientX - rect.left;
+      const my = e.touches[0].clientY - rect.top;
+      if (
+        my >= paddleY &&
+        my <= paddleY + paddleH &&
+        mx >= paddleX &&
+        mx <= paddleX + paddleW
+      ) {
+        touchDragging = true;
+        touchOffsetX = mx - paddleX;
+      }
+    }
+  });
+  canvas.addEventListener("touchmove", function(e) {
+    if (!touchDragging || paused) return;
+    const rect = canvas.getBoundingClientRect();
+    const mx = e.touches[0].clientX - rect.left;
+    paddleX = mx - touchOffsetX;
+    if (paddleX < 0) paddleX = 0;
+    if (paddleX > canvas.width - paddleW) {
+      paddleX = canvas.width - paddleW;
+    }
+  });
+  canvas.addEventListener("touchend", function() {
+    touchDragging = false;
+  });
   // Overlay click for restart
   canvas.addEventListener("click", function(e) {
     if (!showOverlay) return;
@@ -322,5 +354,8 @@ export default function runBrickBreaker(canvas, controlRef) {
     canvas.removeEventListener("mousedown", onMouseDown);
     canvas.removeEventListener("mousemove", onMouseMove);
     window.removeEventListener("mouseup", onMouseUp);
+    canvas.removeEventListener("touchstart", () => {});
+    canvas.removeEventListener("touchmove", () => {});
+    canvas.removeEventListener("touchend", () => {});
   };
 }
