@@ -59,21 +59,27 @@ function GameEmbed({ gameKey, onExit }) {
   // Responsive canvas sizing
   const [canvasSize, setCanvasSize] = useState(() => {
     const w = window.innerWidth;
+    const h = window.innerHeight;
     if (w < 600) {
-      const width = Math.max(w * 0.98, 220);
-      const height = Math.max(w * 0.6, 220);
+      // Use nearly full screen for mobile
+      const width = Math.max(w * 0.99, 280);
+      const height = Math.max(Math.min(h * 0.6, w * 0.99), 280);
       return { width, height };
     }
-    return { width: 480, height: 480 };
+    return { width: 520, height: 520 };
   });
 
   useEffect(() => {
     function handleResize() {
       const w = window.innerWidth;
+      const h = window.innerHeight;
       if (w < 600) {
-        setCanvasSize({ width: Math.max(w * 0.98, 220), height: Math.max(w * 0.6, 220) });
+        setCanvasSize({
+          width: Math.max(w * 0.99, 280),
+          height: Math.max(Math.min(h * 0.6, w * 0.99), 280)
+        });
       } else {
-        setCanvasSize({ width: 480, height: 480 });
+        setCanvasSize({ width: 520, height: 520 });
       }
     }
     window.addEventListener("resize", handleResize);

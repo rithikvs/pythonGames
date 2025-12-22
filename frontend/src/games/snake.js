@@ -102,7 +102,7 @@ export default function runSnake(canvas, controlRef) {
     else if (e.key === "ArrowRight" && lastDir !== 'left') { dx = size; dy = 0; lastDir = 'right'; }
   }
   window.addEventListener("keydown", onKey);
-  // Touch controls for mobile (swipe)
+  // Touch controls for mobile (swipe, improved)
   let touchStartX = null, touchStartY = null;
   canvas.addEventListener("touchstart", function(e) {
     if (e.touches.length === 1) {
@@ -110,19 +110,23 @@ export default function runSnake(canvas, controlRef) {
       touchStartY = e.touches[0].clientY;
     }
   });
-  canvas.addEventListener("touchend", function(e) {
+  canvas.addEventListener("touchmove", function(e) {
     if (touchStartX === null || touchStartY === null) return;
-    const dx = e.changedTouches[0].clientX - touchStartX;
-    const dy = e.changedTouches[0].clientY - touchStartY;
-    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 20) {
+    const dxTouch = e.touches[0].clientX - touchStartX;
+    const dyTouch = e.touches[0].clientY - touchStartY;
+    if (Math.abs(dxTouch) > Math.abs(dyTouch) && Math.abs(dxTouch) > 24) {
       // Horizontal swipe
-      if (dx > 0 && lastDir !== 'left') { dx = size; dy = 0; lastDir = 'right'; }
-      else if (dx < 0 && lastDir !== 'right') { dx = -size; dy = 0; lastDir = 'left'; }
-    } else if (Math.abs(dy) > 20) {
+      if (dxTouch > 0 && lastDir !== 'left') { dx = size; dy = 0; lastDir = 'right'; }
+      else if (dxTouch < 0 && lastDir !== 'right') { dx = -size; dy = 0; lastDir = 'left'; }
+      touchStartX = null; touchStartY = null;
+    } else if (Math.abs(dyTouch) > 24) {
       // Vertical swipe
-      if (dy > 0 && lastDir !== 'up') { dx = 0; dy = size; lastDir = 'down'; }
-      else if (dy < 0 && lastDir !== 'down') { dx = 0; dy = -size; lastDir = 'up'; }
+      if (dyTouch > 0 && lastDir !== 'up') { dx = 0; dy = size; lastDir = 'down'; }
+      else if (dyTouch < 0 && lastDir !== 'down') { dx = 0; dy = -size; lastDir = 'up'; }
+      touchStartX = null; touchStartY = null;
     }
+  });
+  canvas.addEventListener("touchend", function() {
     touchStartX = null; touchStartY = null;
   });
   // Overlay click for restart
