@@ -7,6 +7,8 @@
 // Use the Pause button to temporarily stop the game, Resume to continue from the same state, or Restart to begin a new game.
 // Break all bricks to win the level.
 export default function runBrickBreaker(canvas, controlRef) {
+    // On-screen button controls for mobile
+    let leftBtn = null, rightBtn = null, leftInterval = null, rightInterval = null;
   if (!canvas) return;
   const ctx = canvas.getContext("2d");
 
@@ -337,6 +339,55 @@ export default function runBrickBreaker(canvas, controlRef) {
     paused = false;
     reset();
     loop();
+
+      // --- MOBILE ON-SCREEN BUTTONS ---
+      function createMobileButtons() {
+        if (window.innerWidth >= 600) return;
+        if (document.getElementById('bb-left-btn')) return;
+        leftBtn = document.createElement('button');
+        rightBtn = document.createElement('button');
+        leftBtn.id = 'bb-left-btn';
+        rightBtn.id = 'bb-right-btn';
+        leftBtn.innerText = '◀';
+        rightBtn.innerText = '▶';
+        Object.assign(leftBtn.style, {
+          position: 'fixed', bottom: '18%', left: '8%', zIndex: 1000, fontSize: '2.2rem', borderRadius: '50%', width: '56px', height: '56px', background: '#222', color: '#fff', border: '2px solid #38bdf8', opacity: 0.85
+        });
+        Object.assign(rightBtn.style, {
+          position: 'fixed', bottom: '18%', right: '8%', zIndex: 1000, fontSize: '2.2rem', borderRadius: '50%', width: '56px', height: '56px', background: '#222', color: '#fff', border: '2px solid #38bdf8', opacity: 0.85
+        });
+        document.body.appendChild(leftBtn);
+        document.body.appendChild(rightBtn);
+        leftBtn.ontouchstart = leftBtn.onmousedown = function(e) {
+          e.preventDefault();
+          if (leftInterval) return;
+          leftInterval = setInterval(() => {
+            paddleX -= 16;
+            if (paddleX < 0) paddleX = 0;
+          }, 16);
+        };
+        leftBtn.ontouchend = leftBtn.onmouseup = leftBtn.onmouseleave = function() {
+          clearInterval(leftInterval); leftInterval = null;
+        };
+        rightBtn.ontouchstart = rightBtn.onmousedown = function(e) {
+          e.preventDefault();
+          if (rightInterval) return;
+          rightInterval = setInterval(() => {
+            paddleX += 16;
+            if (paddleX > canvas.width - paddleW) paddleX = canvas.width - paddleW;
+          }, 16);
+        };
+        rightBtn.ontouchend = rightBtn.onmouseup = rightBtn.onmouseleave = function() {
+          clearInterval(rightInterval); rightInterval = null;
+        };
+      }
+      function removeMobileButtons() {
+        if (leftBtn) { leftBtn.remove(); leftBtn = null; }
+        if (rightBtn) { rightBtn.remove(); rightBtn = null; }
+        if (leftInterval) { clearInterval(leftInterval); leftInterval = null; }
+        if (rightInterval) { clearInterval(rightInterval); rightInterval = null; }
+      }
+      createMobileButtons();
     if (window.innerWidth < 600) {
       setTimeout(() => window.dispatchEvent(new Event("restart-done")), 0);
     }
@@ -382,5 +433,6 @@ export default function runBrickBreaker(canvas, controlRef) {
     canvas.removeEventListener("touchstart", () => {});
     canvas.removeEventListener("touchmove", () => {});
     canvas.removeEventListener("touchend", () => {});
+    removeMobileButtons();
   };
 }
