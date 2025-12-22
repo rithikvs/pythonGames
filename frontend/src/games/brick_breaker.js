@@ -289,9 +289,10 @@ export default function runBrickBreaker(canvas, controlRef) {
   canvas.addEventListener("mousedown", onMouseDown);
   canvas.addEventListener("mousemove", onMouseMove);
   window.addEventListener("mouseup", onMouseUp);
-  // Touch drag for paddle
+  // Touch drag for paddle (smooth, inertia)
   let touchDragging = false;
-  let touchOffsetX = 0;
+  let lastTouchX = 0;
+  let paddleVX = 0;
   canvas.addEventListener("touchstart", function(e) {
     if (e.touches.length === 1) {
       const rect = canvas.getBoundingClientRect();
@@ -299,12 +300,13 @@ export default function runBrickBreaker(canvas, controlRef) {
       const my = e.touches[0].clientY - rect.top;
       if (
         my >= paddleY &&
-        my <= paddleY + paddleH &&
+        my <= paddleY + paddleH + 20 &&
         mx >= paddleX &&
         mx <= paddleX + paddleW
       ) {
         touchDragging = true;
-        touchOffsetX = mx - paddleX;
+        lastTouchX = mx;
+        paddleVX = 0;
       }
     }
   });
@@ -312,7 +314,9 @@ export default function runBrickBreaker(canvas, controlRef) {
     if (!touchDragging || paused) return;
     const rect = canvas.getBoundingClientRect();
     const mx = e.touches[0].clientX - rect.left;
-    paddleX = mx - touchOffsetX;
+    paddleVX = mx - lastTouchX;
+    paddleX += paddleVX;
+    lastTouchX = mx;
     if (paddleX < 0) paddleX = 0;
     if (paddleX > canvas.width - paddleW) {
       paddleX = canvas.width - paddleW;
@@ -320,7 +324,19 @@ export default function runBrickBreaker(canvas, controlRef) {
   });
   canvas.addEventListener("touchend", function() {
     touchDragging = false;
+    paddleVX = 0;
   });
+  // Inertia for paddle after drag
+  function animatePaddle() {
+    if (!touchDragging && Math.abs(paddleVX) > 0.5) {
+      paddleX += paddleVX;
+      paddleVX *= 0.85;
+      if (paddleX < 0) paddleX = 0;
+      if (paddleX > canvas.width - paddleW) paddleX = canvas.width - paddleW;
+    }
+    requestAnimationFrame(animatePaddle);
+  }
+  animatePaddle();
   // Overlay click for restart
   function handleRestart() {
     running = true;
