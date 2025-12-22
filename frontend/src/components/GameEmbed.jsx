@@ -117,7 +117,9 @@ function GameEmbed({ gameKey, onExit }) {
 
   return (
     <div className="game-embed">
-      <h2>Playing {gameKey.replace("_", " ")}</h2>
+      <h2 style={{ fontSize: window.innerWidth < 600 && gameKey === "memory_match" ? 18 : 24, margin: window.innerWidth < 600 && gameKey === "memory_match" ? "8px 0 4px 0" : undefined }}>
+        Playing {gameKey.replace("_", " ")}
+      </h2>
       <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
         <canvas
           ref={canvasRef}
@@ -126,20 +128,22 @@ function GameEmbed({ gameKey, onExit }) {
           style={{
             background: "#222",
             borderRadius: 8,
-            marginBottom: 16,
+            marginBottom: window.innerWidth < 600 && gameKey === "memory_match" ? 4 : 16,
             width: canvasSize.width,
             height: canvasSize.height,
             maxWidth: "98vw",
-            maxHeight: "60vw",
+            maxHeight: gameKey === "memory_match" ? "90vw" : "60vw",
             minWidth: 220,
-            minHeight: 220
+            minHeight: 220,
+            touchAction: "manipulation"
           }}
         />
       </div>
       <div className="game-embed-btn-row">
         <button className="pause-btn" onClick={handlePause}>{paused ? "Resume" : "Pause"}</button>
-        {window.innerWidth < 600 && showMobileRestart && (
-          <button className="pause-btn" style={{ background: "#22c55e" }} onClick={handleRestart}>Restart</button>
+        {/* Remove green restart for memory_match on mobile, keep only overlay restart */}
+        {!(window.innerWidth < 600 && gameKey === "memory_match") && (
+          showMobileRestart && <button className="pause-btn" style={{ background: "#22c55e" }} onClick={handleRestart}>Restart</button>
         )}
         <button className="menu-btn" onClick={handleMenu}>Main Menu</button>
       </div>
