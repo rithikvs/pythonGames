@@ -309,13 +309,12 @@ export default function runBrickBreaker(canvas, controlRef) {
     if (!touchDragging || paused) return;
     const rect = canvas.getBoundingClientRect();
     const mx = e.touches[0].clientX - rect.left;
-    paddleVX = mx - lastTouchX;
-    paddleX += paddleVX;
-    lastTouchX = mx;
+    // Directly set paddle center to finger x, clamped
+    paddleX = mx - paddleW / 2;
     if (paddleX < 0) paddleX = 0;
-    if (paddleX > canvas.width - paddleW) {
-      paddleX = canvas.width - paddleW;
-    }
+    if (paddleX > canvas.width - paddleW) paddleX = canvas.width - paddleW;
+    lastTouchX = mx;
+    paddleVX = 0;
   });
   canvas.addEventListener("touchend", function() {
     touchDragging = false;

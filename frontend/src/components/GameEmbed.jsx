@@ -137,12 +137,12 @@ function GameEmbed({ gameKey, onExit }) {
           }}
         />
       </div>
-      <div className="game-embed-btn-row">
-        <button className="pause-btn" onClick={handlePause}>{paused ? "Resume" : "Pause"}</button>
+      <div className="game-embed-btn-row" style={{ display: 'flex', flexDirection: window.innerWidth < 600 ? 'column' : 'row', alignItems: 'center', gap: window.innerWidth < 600 ? 8 : 0 }}>
+        <button className="pause-btn" onClick={handlePause} style={{ width: window.innerWidth < 600 ? '100%' : undefined }}>{paused ? "Resume" : "Pause"}</button>
         {showRestart && (
-          <button className="pause-btn" style={{ background: "#ef4444", marginLeft: 8 }} onClick={handleRestart}>Restart</button>
+          <button className="pause-btn" style={{ background: "#ef4444", width: window.innerWidth < 600 ? '100%' : undefined, marginLeft: window.innerWidth < 600 ? 0 : 8, marginTop: window.innerWidth < 600 ? 8 : 0 }} onClick={handleRestart}>Restart</button>
         )}
-        <button className="menu-btn" onClick={handleMenu}>Main Menu</button>
+        <button className="menu-btn" onClick={handleMenu} style={{ width: window.innerWidth < 600 ? '100%' : undefined }}>{"Main Menu"}</button>
       </div>
     </div>
   );
