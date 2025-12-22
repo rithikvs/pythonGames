@@ -223,10 +223,17 @@ export default function runMemoryMatch(canvas, controlRef) {
   }
   // --- EVENTS ---
   function handlePointer(e) {
+    let mx, my;
+    const rect = canvas.getBoundingClientRect();
+    if (e.type.startsWith('touch')) {
+      // Use the first touch point
+      mx = e.changedTouches[0].clientX - rect.left;
+      my = e.changedTouches[0].clientY - rect.top;
+    } else {
+      mx = e.clientX - rect.left;
+      my = e.clientY - rect.top;
+    }
     if (showOverlay) {
-      const rect = canvas.getBoundingClientRect();
-      const mx = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-      const my = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
       if (
         mx > canvas.width/2-60 && mx < canvas.width/2+60 &&
         my > canvas.height/2+10 && my < canvas.height/2+54
@@ -239,12 +246,7 @@ export default function runMemoryMatch(canvas, controlRef) {
       }
       return;
     }
-    const rect = canvas.getBoundingClientRect();
-    const mx = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-    const my = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
     let idx = -1;
-    // recalculate card positions in case canvas size changed
-    // (reset() will have run on resize, but this is extra safety)
     for (let i = 0; i < cards.length; i++) {
       let c = cards[i];
       if (
@@ -260,7 +262,7 @@ export default function runMemoryMatch(canvas, controlRef) {
   canvas.addEventListener("mousedown", handlePointer);
   // Touch: use pointer events for smoother mobile tap
   canvas.addEventListener("touchstart", function(e) {
-    if (e.touches.length === 1) {
+    if (e.changedTouches && e.changedTouches.length === 1) {
       handlePointer(e);
       e.preventDefault();
     }
