@@ -14,6 +14,7 @@ export default function runMemoryMatch(canvas, controlRef) {
   const ROWS = 4, COLS = 5;
   // Card size and gap will be calculated based on canvas size
   let CARD_W = 64, CARD_H = 84, GAP_X = 18, GAP_Y = 18;
+  let gridOffsetX = 0, gridOffsetY = 0;
   const FLIP_DURATION = 320; // ms
   const FLIP_ANGLE = Math.PI;
 
@@ -41,21 +42,26 @@ export default function runMemoryMatch(canvas, controlRef) {
   }
   function reset() {
     let deck = shuffle([...EMOJIS, ...EMOJIS]); // 10 unique, each appears twice
-    // Calculate card size and gap to fit all cards in canvas
+    // Calculate card size and gap to fit all cards in canvas, centered vertically and horizontally
     const totalGapX = canvas.width * 0.08;
     const totalGapY = canvas.height * 0.08;
     GAP_X = totalGapX / (COLS + 1);
     GAP_Y = totalGapY / (ROWS + 1);
     CARD_W = (canvas.width - (GAP_X * (COLS + 1))) / COLS;
     CARD_H = (canvas.height - (GAP_Y * (ROWS + 1))) / ROWS;
+    // Center the grid
+    const gridW = COLS * CARD_W + (COLS + 1) * GAP_X;
+    const gridH = ROWS * CARD_H + (ROWS + 1) * GAP_Y;
+    gridOffsetX = (canvas.width - gridW) / 2;
+    gridOffsetY = (canvas.height - gridH) / 2;
     cards = [];
     for (let i = 0; i < ROWS * COLS; i++) {
       let row = Math.floor(i / COLS);
       let col = i % COLS;
       cards.push({
         emoji: deck[i],
-        x: col * (CARD_W + GAP_X) + GAP_X,
-        y: row * (CARD_H + GAP_Y) + GAP_Y,
+        x: gridOffsetX + col * (CARD_W + GAP_X) + GAP_X,
+        y: gridOffsetY + row * (CARD_H + GAP_Y) + GAP_Y,
         flipped: false,
         matched: false,
         anim: 0 // 0: face down, 1: face up
@@ -227,11 +233,11 @@ export default function runMemoryMatch(canvas, controlRef) {
     const rect = canvas.getBoundingClientRect();
     if (e.type.startsWith('touch')) {
       // Use the first touch point
-      mx = e.changedTouches[0].clientX - rect.left;
-      my = e.changedTouches[0].clientY - rect.top;
+      mx = ((e.changedTouches[0].clientX - rect.left) / rect.width) * canvas.width;
+      my = ((e.changedTouches[0].clientY - rect.top) / rect.height) * canvas.height;
     } else {
-      mx = e.clientX - rect.left;
-      my = e.clientY - rect.top;
+      mx = ((e.clientX - rect.left) / rect.width) * canvas.width;
+      my = ((e.clientY - rect.top) / rect.height) * canvas.height;
     }
     if (showOverlay) {
       if (
