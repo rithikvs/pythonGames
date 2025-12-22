@@ -277,7 +277,13 @@ export default function runMemoryMatch(canvas, controlRef) {
   // --- CONTROLS ---
   if (controlRef && typeof controlRef === "object") {
     controlRef.current = {
-      restart: () => { reset(); animate(performance.now()); },
+      restart: () => {
+        reset();
+        animate(performance.now());
+        if (window.innerWidth < 600) {
+          setTimeout(() => window.dispatchEvent(new Event("restart-done")), 0);
+        }
+      },
       pause: () => (paused = true),
       resume: () => (paused = false),
       isPaused: () => paused
