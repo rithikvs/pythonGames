@@ -210,24 +210,41 @@ export default function runEndlessRunner(canvas, controlRef) {
     touchStartY = null;
   });
   // Add clickable jump/down buttons
-  canvas.addEventListener("click", function(e) {
-    const rect = canvas.getBoundingClientRect();
-    const mx = e.clientX - rect.left;
-    const my = e.clientY - rect.top;
+  function handleRestartClick(mx, my) {
     if (showOverlay) {
       if (mx > canvas.width/2-60 && mx < canvas.width/2+60 && my > canvas.height/2+10 && my < canvas.height/2+54) {
         reset();
         running = true;
         loop();
-        return;
+        return true;
       }
     }
+    return false;
+  }
+  canvas.addEventListener("click", function(e) {
+    const rect = canvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left;
+    const my = e.clientY - rect.top;
+    if (handleRestartClick(mx, my)) return;
     if (mx > 370 && mx < 440 && my > 10 && my < 35) {
       // JUMP
       if (!jumping && y >= 420) { vy = -20; jumping = true; }
     }
     if (mx > 370 && mx < 440 && my > 35 && my < 60) {
       // DOWN
+      playerDuck = true;
+      setTimeout(() => { playerDuck = false; }, 300);
+    }
+  });
+  canvas.addEventListener("touchstart", function(e) {
+    const rect = canvas.getBoundingClientRect();
+    const touch = e.touches[0];
+    if (handleRestartClick(touch.clientX - rect.left, touch.clientY - rect.top)) return;
+    // Touch: tap right half to jump, left half to duck
+    const mx = touch.clientX - rect.left;
+    if (mx > canvas.width / 2) {
+      if (!jumping && y >= 420) { vy = -20; jumping = true; }
+    } else {
       playerDuck = true;
       setTimeout(() => { playerDuck = false; }, 300);
     }

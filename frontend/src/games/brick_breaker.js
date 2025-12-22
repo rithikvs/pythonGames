@@ -318,16 +318,23 @@ export default function runBrickBreaker(canvas, controlRef) {
     touchDragging = false;
   });
   // Overlay click for restart
-  canvas.addEventListener("click", function(e) {
+  function handleRestartClick(mx, my) {
     if (!showOverlay) return;
-    const rect = canvas.getBoundingClientRect();
-    const mx = e.clientX - rect.left;
-    const my = e.clientY - rect.top;
     if (mx > canvas.width/2-60 && mx < canvas.width/2+60 && my > canvas.height/2+10 && my < canvas.height/2+54) {
       reset();
       running = true;
       loop();
     }
+  }
+  canvas.addEventListener("click", function(e) {
+    const rect = canvas.getBoundingClientRect();
+    handleRestartClick(e.clientX - rect.left, e.clientY - rect.top);
+  });
+  canvas.addEventListener("touchstart", function(e) {
+    if (!showOverlay) return;
+    const rect = canvas.getBoundingClientRect();
+    const touch = e.touches[0];
+    handleRestartClick(touch.clientX - rect.left, touch.clientY - rect.top);
   });
 
   loop();
