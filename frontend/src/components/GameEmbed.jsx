@@ -141,10 +141,6 @@ function GameEmbed({ gameKey, onExit }) {
       </div>
       <div className="game-embed-btn-row">
         <button className="pause-btn" onClick={handlePause}>{paused ? "Resume" : "Pause"}</button>
-        {/* Remove green restart for memory_match on mobile, keep only overlay restart */}
-        {!(window.innerWidth < 600 && gameKey === "memory_match") && (
-          showMobileRestart && <button className="pause-btn" style={{ background: "#22c55e" }} onClick={handleRestart}>Restart</button>
-        )}
         <button className="menu-btn" onClick={handleMenu}>Main Menu</button>
       </div>
     </div>
