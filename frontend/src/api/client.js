@@ -1,4 +1,4 @@
-const API_BASE = "http://localhost:5000";
+const API_BASE = "https://pythongames-1.onrender.com";
 export async function launchGame(gameKey) {
   const res = await fetch(`${API_BASE}/launch`, {
     method: "POST",
