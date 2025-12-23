@@ -16,8 +16,7 @@ export default function runBrickBreaker(canvas, controlRef) {
   let paused = false;
   let showOverlay = false;
   let overlayMessage = "";
-  // Main menu callback (set by parent if needed)
-  let onMainMenu = null;
+  // No main menu callback; use event dispatch like other games
 
   const paddleW = 80, paddleH = 10, ballSize = 20;
   let paddleY = canvas.height - paddleH - 10; // Always 10px above bottom
@@ -414,13 +413,8 @@ export default function runBrickBreaker(canvas, controlRef) {
     // Main Menu button (below restart)
     if (mx > canvas.width/2-60 && mx < canvas.width/2+60 && my > canvas.height/2+64 && my < canvas.height/2+108) {
       // Instantly go to main menu
-      if (typeof onMainMenu === 'function') {
-        onMainMenu();
-      } else {
-        // Fallback: dispatch event for parent to handle
-        window.dispatchEvent(new Event("bb-main-menu"));
-      }
-      showOverlay = false;
+      showOverlay = false; // Hide overlay immediately
+      window.dispatchEvent(new Event("bb-main-menu"));
       return;
     }
   });
@@ -436,12 +430,8 @@ export default function runBrickBreaker(canvas, controlRef) {
     }
     // Main Menu button
     if (mx > canvas.width/2-60 && mx < canvas.width/2+60 && my > canvas.height/2+64 && my < canvas.height/2+108) {
-      if (typeof onMainMenu === 'function') {
-        onMainMenu();
-      } else {
-        window.dispatchEvent(new Event("bb-main-menu"));
-      }
       showOverlay = false;
+      window.dispatchEvent(new Event("bb-main-menu"));
       return;
     }
   });
@@ -454,8 +444,7 @@ export default function runBrickBreaker(canvas, controlRef) {
       restart: handleRestart,
       pause: () => (paused = true),
       resume: () => (paused = false),
-      isPaused: () => paused,
-      setMainMenuHandler: fn => { onMainMenu = fn; }
+      isPaused: () => paused
     };
   }
 

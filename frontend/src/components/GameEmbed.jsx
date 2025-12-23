@@ -100,18 +100,21 @@ function GameEmbed({ gameKey, onExit }) {
     return () => window.removeEventListener("resize", handleResize);
   }, [gameKey]);
 
-  // Listen for game over to show restart button
+  // Listen for game over to show restart button and for main menu event (bb-main-menu)
   useEffect(() => {
     function onGameOver() { setShowRestart(true); }
     function onRestartDone() { setShowRestart(false); }
+    function onMainMenu() { if (typeof onExit === "function") onExit(); }
     window.addEventListener("game-over", onGameOver);
     window.addEventListener("restart-done", onRestartDone);
+    window.addEventListener("bb-main-menu", onMainMenu);
     setShowRestart(false); // Hide on mount/game change
     return () => {
       window.removeEventListener("game-over", onGameOver);
       window.removeEventListener("restart-done", onRestartDone);
+      window.removeEventListener("bb-main-menu", onMainMenu);
     };
-  }, [gameKey]);
+  }, [gameKey, onExit]);
 
   return (
     <div className="game-embed">

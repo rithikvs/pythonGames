@@ -2,6 +2,26 @@
 // Replaces endless runner
 export default function runMemoryMatch(canvas, controlRef) {
   if (!canvas) return;
+  // --- HAND TRACKING WEBSOCKET ---
+  try {
+    const ws = new window.WebSocket("ws://localhost:8765");
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.type === "tap") {
+        // Simulate pointer event at (data.x, data.y)
+        const rect = canvas.getBoundingClientRect();
+        const x = data.x * (canvas.width / rect.width);
+        const y = data.y * (canvas.height / rect.height);
+        handlePointer({ clientX: x, clientY: y, type: "mousedown" });
+      } else if (data.type === "restart") {
+        if (controlRef && controlRef.current && controlRef.current.restart) {
+          controlRef.current.restart();
+        }
+      }
+    };
+  } catch (e) {
+    // Ignore if WebSocket not available
+  }
   const ctx = canvas.getContext("2d");
 
   // --- CONFIG ---
