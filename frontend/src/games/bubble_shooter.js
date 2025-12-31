@@ -7,19 +7,29 @@ const NEW_ROW_INTERVAL = 25000; // 25 seconds
 function randomColor() { return COLORS[Math.floor(Math.random() * COLORS.length)]; }
 
 export default function runBubbleShooter(canvas, controlRef) {
-    // Responsive canvas for mobile sharpness
-    function resizeCanvas() {
-      const dpr = window.devicePixelRatio || 1;
-      const rect = canvas.getBoundingClientRect();
-      canvas.width = rect.width * dpr;
-      canvas.height = rect.height * dpr;
-      ctx.setTransform(1, 0, 0, 1, 0, 0);
-      ctx.scale(dpr, dpr);
-    }
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
-  if (!canvas) return;
+  // Defensive: check canvas and context
+  if (!canvas) {
+    console.error("Bubble Shooter: canvas not found");
+    return;
+  }
   const ctx = canvas.getContext("2d");
+  if (!ctx) {
+    canvas.style.background = '#111';
+    canvas.title = 'Canvas context not available';
+    console.error("Bubble Shooter: 2D context not available");
+    return;
+  }
+  // Responsive canvas for mobile sharpness
+  function resizeCanvas() {
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.scale(dpr, dpr);
+  }
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
   let running = true, paused = false, showOverlay = false, overlayMessage = "";
   let grid, shooter, shot, score, lastBubbleTime, lastRowTime;
   let fallingBubbles = [];
