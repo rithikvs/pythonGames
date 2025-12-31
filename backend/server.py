@@ -18,7 +18,7 @@ CORS(
 GAMES = {
     "snake": "snake.py",
     "flappy_bird": "flappy_bird.py",
-    "brick_breaker": "brick_breaker.py",
+    "bubble_shooter": "bubble_shooter.py",
     "endless_runner": "endless_runner.py",
 }
 

@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 const gameScripts = {
   snake: () => import("../games/snake.js"),
   flappy_bird: () => import("../games/flappy_bird.js"),
-  brick_breaker: () => import("../games/brick_breaker.js"),
+  bubble_shooter: () => import("../games/bubble_shooter.js"),
   memory_match: () => import("../games/memory_match.js"),
 };
 

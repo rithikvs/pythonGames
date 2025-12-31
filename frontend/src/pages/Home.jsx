@@ -12,7 +12,7 @@ function Home() {
   const games = [
     { key: "snake", title: "Snake", description: "Classic snake game." },
     { key: "flappy_bird", title: "Flappy Bird", description: "Fly through the pipes." },
-    { key: "brick_breaker", title: "Brick Breaker", description: "Break all the bricks." },
+    { key: "bubble_shooter", title: "Bubble Shooter", description: "Shoot and match bubbles!" },
     { key: "memory_match", title: "Memory Match", description: "Match all the emoji pairs!" },
   ];
 
