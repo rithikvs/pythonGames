@@ -283,11 +283,13 @@ export default function runBubbleShooter(canvas, controlRef) {
   }
   function onTouchMove(e) {
     if (e.touches && e.touches.length > 0) {
+      e.preventDefault();
       aimAt(e.touches[0].clientX, e.touches[0].clientY);
     }
   }
   function onTouchStart(e) {
     if (e.touches && e.touches.length > 0) {
+      e.preventDefault();
       aimAt(e.touches[0].clientX, e.touches[0].clientY);
       if (!paused && !showOverlay) shoot(shooter.angle);
     }

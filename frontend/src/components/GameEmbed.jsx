@@ -60,15 +60,19 @@ function GameEmbed({ gameKey, onExit }) {
   const [canvasSize, setCanvasSize] = useState(() => {
     const w = window.innerWidth;
     const h = window.innerHeight;
-    if (w < 600) {
-      // Memory match: 4x5 grid, needs more height
-      if (gameKey === "memory_match") {
-        const width = Math.max(w * 0.99, 320);
-        const height = Math.max(Math.min(h * 0.95, width * 1.4), 420);
-        return { width, height };
+    // For mobile, use almost full width and keep aspect ratio
+    if (w < 700) {
+      let width = Math.max(w * 0.98, 220);
+      let height = width * 1.1;
+      // Limit height to fit viewport
+      if (height > h * 0.8) {
+        height = h * 0.8;
+        width = height / 1.1;
       }
-      const width = Math.max(w * 0.99, 280);
-      const height = Math.max(Math.min(h * 0.8, w * 1.15), 320);
+      // Special case for memory_match
+      if (gameKey === "memory_match") {
+        height = Math.max(Math.min(h * 0.95, width * 1.4), 320);
+      }
       return { width, height };
     }
     if (gameKey === "memory_match") return { width: 420, height: 600 };
@@ -80,17 +84,17 @@ function GameEmbed({ gameKey, onExit }) {
     function handleResize() {
       const w = window.innerWidth;
       const h = window.innerHeight;
-      if (w < 600) {
-        if (gameKey === "memory_match") {
-          const width = Math.max(w * 0.99, 320);
-          const height = Math.max(Math.min(h * 0.95, width * 1.4), 420);
-          setCanvasSize({ width, height });
-        } else {
-          setCanvasSize({
-            width: Math.max(w * 0.99, 280),
-            height: Math.max(Math.min(h * 0.8, w * 1.15), 320)
-          });
+      if (w < 700) {
+        let width = Math.max(w * 0.98, 220);
+        let height = width * 1.1;
+        if (height > h * 0.8) {
+          height = h * 0.8;
+          width = height / 1.1;
         }
+        if (gameKey === "memory_match") {
+          height = Math.max(Math.min(h * 0.95, width * 1.4), 320);
+        }
+        setCanvasSize({ width, height });
       } else {
         if (gameKey === "memory_match") setCanvasSize({ width: 420, height: 600 });
         else setCanvasSize({ width: 520, height: 520 });
@@ -129,13 +133,13 @@ function GameEmbed({ gameKey, onExit }) {
           style={{
             background: "#222",
             borderRadius: 8,
-            marginBottom: window.innerWidth < 600 && gameKey === "memory_match" ? 4 : 16,
+            marginBottom: window.innerWidth < 700 && gameKey === "memory_match" ? 4 : 16,
             width: canvasSize.width,
             height: canvasSize.height,
-            maxWidth: "98vw",
-            maxHeight: gameKey === "memory_match" ? "90vw" : "60vw",
-            minWidth: 220,
-            minHeight: 220,
+            maxWidth: "99vw",
+            maxHeight: "80vh",
+            minWidth: 180,
+            minHeight: 180,
             touchAction: "manipulation"
           }}
         />
