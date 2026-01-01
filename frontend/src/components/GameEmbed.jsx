@@ -64,18 +64,26 @@ function GameEmbed({ gameKey, onExit }) {
     if (w < 700) {
       let width = Math.max(w * 0.98, 220);
       let height = width * 1.1;
-      // Limit height to fit viewport
-      if (height > h * 0.8) {
-        height = h * 0.8;
-        width = height / 1.1;
-      }
-      // Special case for memory_match
-      if (gameKey === "memory_match") {
+      // Special case for bubble_shooter: taller aspect ratio for full display
+      if (gameKey === "bubble_shooter") {
+        height = width * 1.35;
+        if (height > h * 0.85) {
+          height = h * 0.85;
+          width = height / 1.35;
+        }
+      } else if (gameKey === "memory_match") {
         height = Math.max(Math.min(h * 0.95, width * 1.4), 320);
+      } else {
+        // Default for other games
+        if (height > h * 0.8) {
+          height = h * 0.8;
+          width = height / 1.1;
+        }
       }
       return { width, height };
     }
     if (gameKey === "memory_match") return { width: 420, height: 600 };
+    if (gameKey === "bubble_shooter") return { width: 520, height: 700 };
     return { width: 520, height: 520 };
   });
 
@@ -87,16 +95,24 @@ function GameEmbed({ gameKey, onExit }) {
       if (w < 700) {
         let width = Math.max(w * 0.98, 220);
         let height = width * 1.1;
-        if (height > h * 0.8) {
-          height = h * 0.8;
-          width = height / 1.1;
-        }
-        if (gameKey === "memory_match") {
+        if (gameKey === "bubble_shooter") {
+          height = width * 1.35;
+          if (height > h * 0.85) {
+            height = h * 0.85;
+            width = height / 1.35;
+          }
+        } else if (gameKey === "memory_match") {
           height = Math.max(Math.min(h * 0.95, width * 1.4), 320);
+        } else {
+          if (height > h * 0.8) {
+            height = h * 0.8;
+            width = height / 1.1;
+          }
         }
         setCanvasSize({ width, height });
       } else {
         if (gameKey === "memory_match") setCanvasSize({ width: 420, height: 600 });
+        else if (gameKey === "bubble_shooter") setCanvasSize({ width: 520, height: 700 });
         else setCanvasSize({ width: 520, height: 520 });
       }
     }
