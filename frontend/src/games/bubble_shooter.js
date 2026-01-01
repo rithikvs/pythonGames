@@ -1,6 +1,8 @@
 // Bubble Shooter Game (Canvas, Pause/Resume/Restart support)
 const COLORS = ["#e74c3c", "#3498db", "#f1c40f", "#2ecc71", "#9b59b6", "#1abc9c"];
-const ROWS = 7, COLS = 12, RADIUS = 18, SHOOTER_Y = 420;
+const ROWS = 7, COLS = 12;
+// RADIUS and SHOOTER_Y will be dynamically calculated
+let RADIUS = 18, SHOOTER_Y = 420;
 const SHOOT_SPEED = 520;
 const NEW_ROW_INTERVAL = 25000; // 25 seconds
 
@@ -27,6 +29,20 @@ export default function runBubbleShooter(canvas, controlRef) {
     canvas.height = rect.height * dpr;
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.scale(dpr, dpr);
+    // Dynamically calculate RADIUS and SHOOTER_Y based on canvas size
+    // Fit grid to width and height
+    const gridWidth = rect.width * 0.96;
+    const gridHeight = rect.height * 0.80;
+    // Calculate max radius that fits both horizontally and vertically
+    const rX = (gridWidth - 40) / (COLS * 2);
+    const rY = (gridHeight - 40) / (ROWS * 1.75);
+    RADIUS = Math.max(12, Math.min(rX, rY));
+    // Shooter Y is below the grid
+    SHOOTER_Y = 40 + ROWS * RADIUS * 1.75 + RADIUS * 2;
+    // Clamp SHOOTER_Y to not go off canvas
+    if (SHOOTER_Y > canvas.height - RADIUS * 2) {
+      SHOOTER_Y = canvas.height - RADIUS * 2;
+    }
   }
   resizeCanvas();
   window.addEventListener('resize', resizeCanvas);
@@ -68,6 +84,7 @@ export default function runBubbleShooter(canvas, controlRef) {
   }
 
   function gridToXY(col, row) {
+    // Use dynamic RADIUS
     let x = 40 + col * RADIUS * 2 + (row % 2 ? RADIUS : 0);
     let y = 40 + row * RADIUS * 1.75;
     return { x, y };
