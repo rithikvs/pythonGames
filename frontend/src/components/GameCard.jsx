@@ -45,7 +45,7 @@ function GameCard({ title, description, onStart, loading }) {
       )}
       <h2 style={{ color: accent.border }}>{title}</h2>
       <p>{description}</p>
-      <button onClick={onStart} disabled={loading}>
+      <button className="start-btn" onClick={onStart} disabled={loading}>
         {loading ? "Starting..." : "Start"}
       </button>
     </div>
