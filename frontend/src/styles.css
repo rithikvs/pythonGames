@@ -1,3 +1,14 @@
+/* Reduce heading size on mobile devices */
+@media (max-width: 600px) {
+  h1 {
+    font-size: 2.2rem;
+    line-height: 2.5rem;
+  }
+  h2 {
+    font-size: 1.3rem;
+    line-height: 1.7rem;
+  }
+}
 /* Puzzle Game Styles */
 .puzzle-board {
   display: flex;
