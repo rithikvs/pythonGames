@@ -1,3 +1,63 @@
+@media (max-width: 900px) {
+  .games-grid {
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    min-height: 60vh;
+    width: 100vw;
+    padding: 0 0.5rem;
+    overflow-x: hidden;
+  }
+  .game-card {
+    width: 90vw;
+    min-width: 90vw;
+    max-width: 98vw;
+    min-height: 260px;
+    max-height: none;
+    padding: 2rem 1rem 1.5rem 1rem;
+    font-size: 1.1rem;
+    margin-bottom: 0;
+    box-sizing: border-box;
+  }
+  .game-card-img {
+    max-height: 120px;
+    min-height: 80px;
+    margin-bottom: 14px;
+  }
+  .game-card h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.7rem;
+  }
+  .game-card button {
+    font-size: 1.1rem;
+    padding: 0.85rem 2.2rem;
+    margin-top: 0.5rem;
+  }
+  .game-card p {
+    font-size: 1.05rem;
+    margin-bottom: 1.1rem;
+  }
+  .game-embed {
+    min-width: 0;
+    max-width: 100vw;
+    min-height: 320px;
+    padding: 1.2rem 0.5rem;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  .game-embed canvas {
+    width: 96vw !important;
+    height: 54vw !important;
+    max-width: 96vw !important;
+    max-height: 54vw !important;
+    min-width: 180px;
+    min-height: 180px;
+  }
+  .game-embed-btn-row {
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+}
 /* Puzzle Game Styles */
 .puzzle-board {
   display: flex;
