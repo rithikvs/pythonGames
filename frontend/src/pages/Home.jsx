@@ -35,7 +35,7 @@ function Home() {
 
   return (
     <div className="home">
-      <h1>Game Launcher</h1>
+      <h1>Game Spot</h1>
       {error && <div className="error">{error}</div>}
       {!selectedGame && (
         <div className="games-grid">
