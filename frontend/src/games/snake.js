@@ -92,11 +92,12 @@ export default function runSnake(canvas, controlRef) {
     return pos;
   }
 
+  let gameSpeed = 120;
   function loop() {
     if (!running) return;
     if (!paused) update();
     draw();
-    setTimeout(loop, 120); // slower speed
+    setTimeout(loop, gameSpeed); // always use initial speed
   }
 
   function onKey(e) {
@@ -137,8 +138,8 @@ export default function runSnake(canvas, controlRef) {
   function handleRestart() {
     reset();
     running = true;
+    gameSpeed = 120; // always reset to initial speed
     loop();
-    // Show restart button again on mobile
     if (window.innerWidth < 600) {
       setTimeout(() => window.dispatchEvent(new Event("restart-done")), 0);
     }
