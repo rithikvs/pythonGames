@@ -229,6 +229,8 @@ export default function runFlappyBird(canvas, controlRef) {
     running = true;
     paused = false;
     reset();
+    showOverlay = false;
+    overlayMessage = "";
     requestAnimationFrame(loop);
     if (window.innerWidth < 600) {
       setTimeout(() => window.dispatchEvent(new Event("restart-done")), 0);
