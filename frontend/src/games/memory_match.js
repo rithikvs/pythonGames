@@ -194,7 +194,10 @@ export default function runMemoryMatch(canvas, controlRef) {
               if (matches === PAIRS) {
                 running = false;
                 showOverlay = true;
-                overlayMessage = "You Win!";
+                overlayMessage = "🎉 You Win! Great Memory! 🎉";
+                setTimeout(() => {
+                  alert("Congratulations! You matched all pairs!");
+                }, 300);
               }
               flipped = [];
               animating = false;

@@ -47,6 +47,10 @@ function GameEmbed({ gameKey, onExit }) {
     if (gameControlRef.current && typeof gameControlRef.current.restart === "function") {
       gameControlRef.current.restart();
       setPaused(false);
+      // Move focus to canvas after restart so button is not focused
+      if (canvasRef.current) {
+        canvasRef.current.focus();
+      }
     } else {
       alert("Restart not implemented in this game");
     }
@@ -145,6 +149,7 @@ function GameEmbed({ gameKey, onExit }) {
           ref={canvasRef}
           width={canvasSize.width}
           height={canvasSize.height}
+          tabIndex={0}
           style={{
             background: "#222",
             borderRadius: 8,
