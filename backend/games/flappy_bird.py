@@ -14,6 +14,7 @@ BIRD_RADIUS = 16
 PIPE_WIDTH = 60
 
 # ================= GLOBAL STATE =================
+
 bird_y = HEIGHT // 2
 bird_vel = 0.0
 pipes = []
@@ -21,6 +22,7 @@ pipe_timer = 0.0
 
 game_paused = False
 show_menu = True
+
 
 
 # ================= HARD RESET =================
@@ -100,7 +102,7 @@ def update_game(dt):
     for p in pipes:
         p["x"] += PIPE_SPEED * dt
 
-    pipes = [p for p in pipes if p["x"] > -PIPE_WIDTH]
+    pipes[:] = [p for p in pipes if p["x"] > -PIPE_WIDTH]
 
     # -------- COLLISION --------
     if bird_y < BIRD_RADIUS or bird_y > HEIGHT - BIRD_RADIUS:

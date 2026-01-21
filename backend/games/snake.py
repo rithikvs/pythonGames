@@ -17,6 +17,16 @@ def init_state():
     snake = [(cols // 2, rows // 2)]
     direction = (1, 0)
     spawn_food()
+    if camera_mode:
+        if gesture_tracker is None:
+            try:
+                gesture_tracker = HandGestureTracker()
+            except Exception as e:
+                print(f"Hand gesture tracker error: {e}")
+    else:
+        if gesture_tracker:
+            gesture_tracker.release()
+            gesture_tracker = None
 
 game_paused = False
 show_menu = True
@@ -34,7 +44,6 @@ def spawn_food():
             break
 
 
-def update_game(dt):
     global snake, direction, food
     keys = pygame.key.get_pressed()
     if keys[pygame.K_UP] and direction != (0, 1):
