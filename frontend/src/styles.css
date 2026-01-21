@@ -93,19 +93,25 @@ html, body {
 @media (max-width: 900px) {
   .games-grid {
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    flex-direction: row;
+    align-items: stretch;
     width: 100vw;
     min-height: 100vh;
-    gap: 2rem;
-    overflow: visible;
+    gap: 1.2rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 2rem;
+    box-sizing: border-box;
+    scroll-snap-type: x mandatory;
   }
   .game-card {
-    width: 96vw;
+    width: 85vw;
+    min-width: 260px;
     max-width: 98vw;
     height: 320px;
     padding: 1.2rem 0.7rem 1rem 0.7rem;
     font-size: 1.05rem;
+    scroll-snap-align: center;
   }
 }
   /* 2 cards top, 1 card bottom layout for 3 cards */
